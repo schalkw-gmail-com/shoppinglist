@@ -1,7 +1,7 @@
 list
 - id (int)
 - name (varchar 255)
-- date (datetime)
+- date (date) default current timestamp
 
 
 items

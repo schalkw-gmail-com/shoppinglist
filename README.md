@@ -9,3 +9,9 @@ But basically started with the db layout.
 
 Once we have the DB in place, I believe it is good start to from the bottom up
 thus creating the db connections and making sure this is working correctly.
+
+The order off business is as follows
+ - new list
+ - add an item to the list
+ - view the list
+ - mark an item on the list being viewed
