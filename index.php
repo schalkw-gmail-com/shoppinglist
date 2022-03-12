@@ -18,6 +18,15 @@ if($_GET['action']=='new'){
     require_once('new-list.php');
 }
 
+var_dump($_REQUEST);
+
+if(!is_null($_REQUEST['btn_new_item'])){
+    $sql = "insert into items (name, list_id) values ('".$_REQUEST['new_item']."', ".$_REQUEST['lists'].")";
+    $query=mysqli_query($connection,$sql);
+    echo $sql;
+}
+
+
 if(is_numeric($_GET['lists'])){
 
     $sql = "select * 
@@ -31,6 +40,8 @@ if(is_numeric($_GET['lists'])){
        $listItemArray[] = $qq;
     }
 }
+
+
 
 ?>
 
@@ -62,13 +73,16 @@ if(is_numeric($_GET['lists'])){
     </select>
     
     <?php
+    
         foreach ($listItemArray as $items){
             ?>
-            <input type="text" id="item_name" name="item_name" value="">
+            <br><input type="text" id="item_name" name="item_name" value="<?php echo $items['name'];?>">
             <?php
         }
     
     ?>
-    
+    <br>
+    <input type="text" id="new_item" name="new_item" value="">
+    <input type="submit" value="Add" name="btn_new_item" id="btn_new_item">
 </form>
 <?php
