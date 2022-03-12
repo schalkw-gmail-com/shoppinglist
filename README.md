@@ -19,3 +19,6 @@ The order in which i created the back end functionality is as follows
  - edit a item name
 
 Once the back end is running, I can start cleaning up the code and making the front look a bit prettier.
+
+After I have done some clean up and made things a little more pretty, I realised I did not have an example of joining tables
+with SQL, therefor I added a new button as a view mode for the particular list.

@@ -3,6 +3,7 @@
 class dbConnection{
 
     public $connection;
+    
     public function __construct()
     {
         $this->connection = mysqli_connect("127.0.0.1", "root", "kickstart", "shopping");
@@ -65,7 +66,15 @@ class dbConnection{
         $sql = "update items set checked = 0 where list_id = " . $listId;
         $query = mysqli_query($this->connection, $sql);
     }
-
-
+    
+    public function select_list($list){
+        $sql = " select l.name, i.name as item_name, i.checked, i.id from list l inner join items i on i.list_id = l.id where l.id = ".$list;        
+        $query = mysqli_query($this->connection, $sql);
+        $listArray = array();
+        while ($qq = mysqli_fetch_array($query)) {
+            $listArray[] = $qq;
+        }
+        return $listArray;
+    }
 }
 $db = new dbConnection();

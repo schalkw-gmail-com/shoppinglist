@@ -6,8 +6,13 @@
     if ($_REQUEST['action'] == 'new') {
         require_once('new-list.php');
         die();
-    }    
-    
+    }
+
+    if (($_REQUEST['action'] == 'view') && (!empty($_REQUEST['lists']))) {
+        require_once('view-list.php');
+        die();
+    }
+
     $theListArray = $db->select_all_list();
 
     if ($_REQUEST['action'] == 'remove') {
@@ -30,16 +35,6 @@
             $db->un_mark_all_items_on_list($_REQUEST['lists']);
         }
     }
-
-
-//        $sql = "select * 
-//            from list l inner join items i on i.list_id = l.id
-//            where l.id = " . $_REQUEST['lists'];
-//        $query = mysqli_query($connection, $sql);
-//        while ($qq = mysqli_fetch_array($query)) {
-//            $listItemArray[] = $qq;
-//        }
-//    }
 
     include_once ('header.php');
     
@@ -66,7 +61,9 @@
                     }
                 ?>
         </select>
-    </div>
+
+
+        <a href="index.php?action=view&lists=<?php echo $_REQUEST['lists'];?>"  class="btn btn-info">View the list</a>
     
     <?php
         $listItemArray = $db->select_all_items_per_list($_REQUEST['lists']);
@@ -96,6 +93,7 @@
     <input type="hidden" id="current_list" name="current_list">
     <input type="hidden" id="current_list_item" name="current_list_item">
     <input type="hidden" id="action" name="action">
+    </div>
 </form>
 
     
