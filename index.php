@@ -1,102 +1,75 @@
 <?php
 
+    $db ='';
     include_once('db.php');
-    
-    if ($_REQUEST['action'] == 'remove') {
-        $sql = "delete from items where id = " . $_REQUEST['item_id'];
-        echo $sql;
-        $query = mysqli_query($connection, $sql);
-    }
-    
-    if ($_REQUEST['action'] == 'edit_item') {
-        $sql = "update items set name = '" . $_REQUEST['name_change'] . "' where id = " . $_REQUEST['current_list_item'] . " and list_id = " . $_REQUEST['current_list'];
-    
-        echo $sql;
-        $query = mysqli_query($connection, $sql);
-    }
-    
-    $sql = "select * from list";
-    $query = mysqli_query($connection, $sql);
-    $listArray = array();
-    while ($qq = mysqli_fetch_array($query)) {
-        $listArray[] = $qq;
-    }
-    
+
     if ($_REQUEST['action'] == 'new') {
         require_once('new-list.php');
         die();
+    }    
+    
+    $theListArray = $db->select_all_list();
+
+    if ($_REQUEST['action'] == 'remove') {
+        $db->remove_item_from_list($_REQUEST['lists'], $_REQUEST['item_id']);
+    }
+    
+    if ($_REQUEST['action'] == 'edit_item') {
+        $db->edit_item_in_list($_REQUEST['name_change'], $_REQUEST['current_list'], $_REQUEST['current_list_item']);
     }
     
     if (!is_null($_REQUEST['btn_new_item'])) {
-        $sql = "insert into items (name, list_id) values ('" . $_REQUEST['new_item'] . "', " . $_REQUEST['lists'] . ")";
-        $query = mysqli_query($connection, $sql);
+        $db->add_new_item_to_list($_REQUEST['new_item'], $_REQUEST['lists']);
     }
-       
-    if (is_numeric($_REQUEST['lists'])) {
-        if ($_REQUEST['btn_mark_items'] == 'Mark Items') {
+
+    if ($_REQUEST['btn_mark_items'] == 'Mark Items') {
+        if (is_array($_REQUEST['list_items'])) {
             $idString = implode(",", $_REQUEST['list_items']);
-            $sql = "update items set checked = 1 where list_id = " . $_REQUEST['lists'] . " and id in (" . $idString . ")";
-            $query = mysqli_query($connection, $sql);
-        }
-    
-        $sql = "select * 
-            from list l inner join items i on i.list_id = l.id
-            where l.id = " . $_REQUEST['lists'];
-        $query = mysqli_query($connection, $sql);
-        while ($qq = mysqli_fetch_array($query)) {
-            $listItemArray[] = $qq;
+            $db->mark_items_on_list($_REQUEST['lists'], $idString);
+        } else {
+            $db->un_mark_all_items_on_list($_REQUEST['lists']);
         }
     }
+
+
+//        $sql = "select * 
+//            from list l inner join items i on i.list_id = l.id
+//            where l.id = " . $_REQUEST['lists'];
+//        $query = mysqli_query($connection, $sql);
+//        while ($qq = mysqli_fetch_array($query)) {
+//            $listItemArray[] = $qq;
+//        }
+//    }
 
     include_once ('header.php');
     
     ?>
 
-<h1>My Shopping List</h1>
+<h1 class="center">My Shopping Lists</h1>
 
 <form action="index.php" id="main_page" method="post">
-    
-<a href="index.php?action=new" class="btn btn-primary my-margin">Create a New List</a>
-
-<script>
-    function changeList(selectObject) {
-        var value = selectObject.value;
-        console.log(value);
-        document.getElementById("main_page").submit();
-    }
-    
-    function editItem(id,currentList)
-    {
-        var item = 'item_'+id;
-        var name = document.getElementById(item).value;
+    <div class=" my-margin">
+        <a href="index.php?action=new" class="btn btn-primary my-margin">Create a New List</a>       
         
-        document.getElementById("name_change").value = name;        
-        document.getElementById("current_list").value = currentList;
-        document.getElementById("current_list_item").value = id;
-        document.getElementById("action").value = 'edit_item';
-        
-        document.getElementById("main_page").submit();
-                   
-    }
-</script>
-    <h3 class=" my-margin">Select a list to edit:</h3>
-    <select name="lists" id="lists" class=" my-margin" onchange="changeList(this)">
-        <option value="0" >Select a list</option>
-        <?php
-            foreach($listArray as $list){
-                $selected = "";
-                if(is_numeric($_REQUEST['lists']) && $list['id'] == $_REQUEST['lists']){
-                    $selected = "selected";
-                }
-                ?>                
-                <option <?php echo $selected;?> value="<?php echo $list['id']; ?>" ><?php echo $list['name']; ?></option>
+        Select a list to edit:
+        <select name="lists" id="lists" class=" my-margin" onchange="changeList(this)">
+            <option value="0" >Select a list</option>
                 <?php
-            }
-        ?>
-    </select>
+                    foreach($theListArray as $list){
+                        $selected = "";
+                        if(is_numeric($_REQUEST['lists']) && $list['id'] == $_REQUEST['lists']){
+                            $selected = "selected";
+                        }
+                        ?>                
+                        <option <?php echo $selected;?> value="<?php echo $list['id']; ?>" ><?php echo $list['name']; ?></option>
+                        <?php
+                    }
+                ?>
+        </select>
+    </div>
     
     <?php
-    
+        $listItemArray = $db->select_all_items_per_list($_REQUEST['lists']);
         foreach ($listItemArray as $items){
             $checked= "";
             if($items['checked'] == 1){
@@ -108,6 +81,7 @@
             <input type="checkbox" name="list_items[]" id="list_items" <?php echo $checked;?> value="<?php echo $items['id'];?>">
             <input type="text" id="item_<?php echo $items['id'];?>" name="list_item" value="<?php echo $items['name'];?>"> 
             <a onclick="editItem(<?php echo $items['id'];?>,<?php echo $_REQUEST['lists'];?>)" class="btn btn-warning">Edit the Item </a>
+            <a href="index.php?action=remove&lists=<?php echo $_REQUEST['lists'];?>&item_id=<?php echo $items['id'];?>"  class="btn btn-danger">Remove Item</a>
             <br>
             <?php
         }    

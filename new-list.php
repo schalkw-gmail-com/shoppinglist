@@ -2,12 +2,12 @@
     include_once('db.php');
 
     if ($_REQUEST['save_list'] == 'save' && $_REQUEST['list_name'] != '') {
-        $sql = "insert into list (name) values ('" . $_REQUEST['list_name'] . "')";
-        mysqli_query($connection, $sql);
+        
+        $db->add_new_list($_REQUEST['list_name']); 
         header('location:index.php');
     }
 
-include_once ('header.php');
+    include_once ('header.php');
 ?>
 
 <h1> new list</h1>
