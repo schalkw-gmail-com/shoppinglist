@@ -1,0 +1,11 @@
+list
+- id (int)
+- name (varchar 255)
+- date (datetime)
+
+
+items
+- id (int)
+- name (varchar 255)
+- list_id (int) FK -> list.id
+- checked (tinyint) default 0 
