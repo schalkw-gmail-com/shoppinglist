@@ -1,69 +1,53 @@
 <?php
 
-include_once('db.php');
-
-var_dump($_REQUEST);
-echo "<h1>wwwwwww</h1>";
-
-
-if($_REQUEST['action']=='remove'){
-    $sql = "delete from items where id = ".$_REQUEST['item_id'];
-    echo $sql;
-    $query=mysqli_query($connection,$sql);
-}
-
-if($_REQUEST['action']=='edit_item'){
-    $sql = "update items set name = '".$_REQUEST['name_change']."' where id = ".$_REQUEST['current_list_item']." and list_id = ".$_REQUEST['current_list'];
+    include_once('db.php');
     
-    echo $sql;
-    $query=mysqli_query($connection,$sql);
-}
-
-$sql = "select * from list";
-$query=mysqli_query($connection,$sql);
-$listArray = array();
-while ($qq=mysqli_fetch_array($query))
-{
-    $listArray[] = $qq; 
-}
-
-if($_REQUEST['action']=='new'){
-    echo "build a a  new list";
-    require_once('new-list.php');
-}
-
-var_dump($_REQUEST);
-
-if(!is_null($_REQUEST['btn_new_item'])){
-    $sql = "insert into items (name, list_id) values ('".$_REQUEST['new_item']."', ".$_REQUEST['lists'].")";
-    $query=mysqli_query($connection,$sql);
-   // echo $sql;
-}
-
-
-if(is_numeric($_REQUEST['lists'])){
+    if ($_REQUEST['action'] == 'remove') {
+        $sql = "delete from items where id = " . $_REQUEST['item_id'];
+        echo $sql;
+        $query = mysqli_query($connection, $sql);
+    }
     
-    if($_REQUEST['btn_mark_items'] == 'Mark Items'  ){
-        
-        $idString = implode(",",$_REQUEST['list_items']);
-        $sql = "update items set checked = 1 where list_id = ".$_REQUEST['lists']." and id in (".$idString.")";
-        $query=mysqli_query($connection,$sql);
+    if ($_REQUEST['action'] == 'edit_item') {
+        $sql = "update items set name = '" . $_REQUEST['name_change'] . "' where id = " . $_REQUEST['current_list_item'] . " and list_id = " . $_REQUEST['current_list'];
+    
+        echo $sql;
+        $query = mysqli_query($connection, $sql);
     }
-
-    $sql = "select * 
-        from list l inner join items i on i.list_id = l.id
-        where l.id = ". $_REQUEST['lists'];
-    $query=mysqli_query($connection,$sql);
-  //  echo $sql;
-    while ($qq=mysqli_fetch_array($query))
-    {
-     //  var_dump($qq);
-       $listItemArray[] = $qq;
+    
+    $sql = "select * from list";
+    $query = mysqli_query($connection, $sql);
+    $listArray = array();
+    while ($qq = mysqli_fetch_array($query)) {
+        $listArray[] = $qq;
     }
-}
-
-
-
+    
+    if ($_REQUEST['action'] == 'new') {
+        echo "build a a  new list";
+        require_once('new-list.php');
+    }
+    
+    if (!is_null($_REQUEST['btn_new_item'])) {
+        $sql = "insert into items (name, list_id) values ('" . $_REQUEST['new_item'] . "', " . $_REQUEST['lists'] . ")";
+        $query = mysqli_query($connection, $sql);
+    }
+    
+    
+    if (is_numeric($_REQUEST['lists'])) {
+        if ($_REQUEST['btn_mark_items'] == 'Mark Items') {
+            $idString = implode(",", $_REQUEST['list_items']);
+            $sql = "update items set checked = 1 where list_id = " . $_REQUEST['lists'] . " and id in (" . $idString . ")";
+            $query = mysqli_query($connection, $sql);
+        }
+    
+        $sql = "select * 
+            from list l inner join items i on i.list_id = l.id
+            where l.id = " . $_REQUEST['lists'];
+        $query = mysqli_query($connection, $sql);
+        while ($qq = mysqli_fetch_array($query)) {
+            $listItemArray[] = $qq;
+        }
+    }
 ?>
 
 <form action="index.php" id="main_page" method="post">
@@ -79,9 +63,9 @@ if(is_numeric($_REQUEST['lists'])){
     
     function editItem(id,currentList)
     {
-
         var item = 'item_'+id;
         var name = document.getElementById(item).value;
+        
         document.getElementById("name_change").value = name;        
         document.getElementById("current_list").value = currentList;
         document.getElementById("current_list_item").value = id;
@@ -118,19 +102,12 @@ if(is_numeric($_REQUEST['lists'])){
             <br>
             
             <input type="checkbox" name="list_items[]" id="list_items" <?php echo $checked;?> value="<?php echo $items['id'];?>">
-
-
-            <input type="text" id="item_<?php echo $items['id'];?>" name="list_item" value="<?php echo $items['name'];?>">
-                
-            <a href="index.php?action=remove&lists=<?php echo $_REQUEST['lists'];?>&item_id=<?php echo $items['id'];?>">Remove Item</a>
-            
+            <input type="text" id="item_<?php echo $items['id'];?>" name="list_item" value="<?php echo $items['name'];?>">                          
             <a href="index.php?action=edit&lists=<?php echo $_REQUEST['lists'];?>&item_id=<?php echo $items['id'];?>">Edit Item</a>
-
             <a onclick="editItem(<?php echo $items['id'];?>,<?php echo $_REQUEST['lists'];?>)">Edit Item2 </a>
             <br>
             <?php
-        }
-    
+        }    
     ?>
     <br>
     <input type="text" id="new_item" name="new_item" value="">
