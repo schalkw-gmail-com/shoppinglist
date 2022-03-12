@@ -3,8 +3,6 @@
     
     if(!$connection){
         die("cannot connect to server");   
-    }else{
-        echo 'db connection is up';
     }
 
  
