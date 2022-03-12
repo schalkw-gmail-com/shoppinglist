@@ -12,6 +12,13 @@ if($_REQUEST['action']=='remove'){
     $query=mysqli_query($connection,$sql);
 }
 
+if($_REQUEST['action']=='edit_item'){
+    $sql = "update items set name = '".$_REQUEST['name_change']."' where id = ".$_REQUEST['current_list_item']." and list_id = ".$_REQUEST['current_list'];
+    
+    echo $sql;
+    $query=mysqli_query($connection,$sql);
+}
+
 $sql = "select * from list";
 $query=mysqli_query($connection,$sql);
 $listArray = array();
@@ -69,6 +76,20 @@ if(is_numeric($_REQUEST['lists'])){
         console.log(value);
         document.getElementById("main_page").submit();
     }
+    
+    function editItem(id,currentList)
+    {
+
+        var item = 'item_'+id;
+        var name = document.getElementById(item).value;
+        document.getElementById("name_change").value = name;        
+        document.getElementById("current_list").value = currentList;
+        document.getElementById("current_list_item").value = id;
+        document.getElementById("action").value = 'edit_item';
+        
+        document.getElementById("main_page").submit();
+                   
+    }
 </script>
     
     <select name="lists" id="lists" onchange="changeList(this)">
@@ -95,10 +116,17 @@ if(is_numeric($_REQUEST['lists'])){
             }
             ?>
             <br>
-            <input type="checkbox" name="list_items[]" id="list_items" <?php echo $checked;?> value="<?php echo $items['id'];?>"><?php echo $items['name'];?>
+            
+            <input type="checkbox" name="list_items[]" id="list_items" <?php echo $checked;?> value="<?php echo $items['id'];?>">
 
+
+            <input type="text" id="item_<?php echo $items['id'];?>" name="list_item" value="<?php echo $items['name'];?>">
+                
             <a href="index.php?action=remove&lists=<?php echo $_REQUEST['lists'];?>&item_id=<?php echo $items['id'];?>">Remove Item</a>
             
+            <a href="index.php?action=edit&lists=<?php echo $_REQUEST['lists'];?>&item_id=<?php echo $items['id'];?>">Edit Item</a>
+
+            <a onclick="editItem(<?php echo $items['id'];?>,<?php echo $_REQUEST['lists'];?>)">Edit Item2 </a>
             <br>
             <?php
         }
@@ -108,5 +136,9 @@ if(is_numeric($_REQUEST['lists'])){
     <input type="text" id="new_item" name="new_item" value="">
     <input type="submit" value="Add" name="btn_new_item" id="btn_new_item">
     <input type="submit" value="Mark Items" name="btn_mark_items" id="btn_mark_items">
+    <input type="hidden" id="name_change" name="name_change">
+    <input type="hidden" id="current_list" name="current_list">
+    <input type="hidden" id="current_list_item" name="current_list_item">
+    <input type="hidden" id="action" name="action">
 </form>
 <?php
