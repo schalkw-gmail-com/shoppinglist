@@ -1,7 +1,7 @@
 <?php
 
     include_once('db.php');
-    if($_GET['save_list'] == 'save' && $_GET['list_name'] != ''){
+    if($_REQUEST['save_list'] == 'save' && $_REQUEST['list_name'] != ''){
         $sql = "insert into list (name) values ('".$_REQUEST['list_name']."')";
         mysqli_query($connection,$sql);
         header('location:index.php');
