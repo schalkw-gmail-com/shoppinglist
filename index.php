@@ -5,6 +5,13 @@ include_once('db.php');
 var_dump($_REQUEST);
 echo "<h1>wwwwwww</h1>";
 
+
+if($_REQUEST['action']=='remove'){
+    $sql = "delete from items where id = ".$_REQUEST['item_id'];
+    echo $sql;
+    $query=mysqli_query($connection,$sql);
+}
+
 $sql = "select * from list";
 $query=mysqli_query($connection,$sql);
 $listArray = array();
@@ -13,7 +20,7 @@ while ($qq=mysqli_fetch_array($query))
     $listArray[] = $qq; 
 }
 
-if($_GET['action']=='new'){
+if($_REQUEST['action']=='new'){
     echo "build a a  new list";
     require_once('new-list.php');
 }
@@ -88,7 +95,11 @@ if(is_numeric($_REQUEST['lists'])){
             }
             ?>
             <br>
-            <input type="checkbox" name="list_items[]" id="list_items" <?php echo $checked;?> value="<?php echo $items['id'];?>"><?php echo $items['name'];?><br>
+            <input type="checkbox" name="list_items[]" id="list_items" <?php echo $checked;?> value="<?php echo $items['id'];?>"><?php echo $items['name'];?>
+
+            <a href="index.php?action=remove&lists=<?php echo $_REQUEST['lists'];?>&item_id=<?php echo $items['id'];?>">Remove Item</a>
+            
+            <br>
             <?php
         }
     

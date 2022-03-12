@@ -15,3 +15,4 @@ The order off business is as follows
  - add an item to the list
  - view the list
  - mark an item on the list being viewed
+ - remove items from the list
